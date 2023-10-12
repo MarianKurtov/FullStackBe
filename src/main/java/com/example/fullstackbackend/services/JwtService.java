@@ -21,7 +21,7 @@ import java.util.function.Function;
 public class JwtService {
 
     @Autowired
-    UserRepository repository;
+    UserRepository userRepository;
 
     private static final String SECRET_KEY = "asdadweasdasdadwadfafgawgfa3sge3514132ze412asds3123123w6h54151245btw45g34vefa";
 
@@ -54,15 +54,14 @@ public class JwtService {
 
     public String generateToken(Map<String, Objects> extraClaims, UserDetails userDetails) {
 
-        var user = repository.getUserEntityByPassword(userDetails.getPassword()).orElseThrow();
-
-        var some = user.getId();
+        var user = userRepository.getUserEntityByPassword(userDetails.getPassword()).orElseThrow();
+        var role = user.getRoles().stream().findFirst().get().getName();
 
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
-//                .setId(some)
-                .setSubject(user.getRoles().toString())
+                .setId(Long.toString(user.getId()))
+                .setSubject(role)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
