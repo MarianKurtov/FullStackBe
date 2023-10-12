@@ -41,8 +41,8 @@ public class AuthenticationService {
 
             var user =  new UserEntity(
                     request.getName(),
-                    request.getEmail(),
                     passwordEncoder.encode(request.getPassword()),
+                    request.getEmail(),
                     userRoles
             );
 
