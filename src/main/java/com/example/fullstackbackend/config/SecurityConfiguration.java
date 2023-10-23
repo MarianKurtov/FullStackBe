@@ -1,5 +1,6 @@
 package com.example.fullstackbackend.config;
 
+import com.example.fullstackbackend.filter.JWTAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;

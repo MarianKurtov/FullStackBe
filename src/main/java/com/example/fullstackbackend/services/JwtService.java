@@ -1,5 +1,6 @@
 package com.example.fullstackbackend.services;
 
+import com.example.fullstackbackend.entities.UserEntity;
 import com.example.fullstackbackend.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -26,6 +27,7 @@ public class JwtService {
     private static final String SECRET_KEY = "asdadweasdasdadwadfafgawgfa3sge3514132ze412asds3123123w6h54151245btw45g34vefa";
 
     public String extractUsername(String token) {
+        //Claims::getSubject should be username or email
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -41,7 +43,7 @@ public class JwtService {
     public boolean isTokenValid(String token, UserDetails userDetails) {
         //validate if this token belong to this User
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        return (username.equals(((UserEntity) userDetails).getEmail()) && !isTokenExpired(token));
     }
 
     private boolean isTokenExpired(String token) {
@@ -60,10 +62,11 @@ public class JwtService {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
-                .setId(Long.toString(user.getId()))
-                .setSubject(role)
+//                .setId(Long.toString(user.getId()))
+                .setSubject(user.getEmail())
+//                .setSubject(role)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .setExpiration(new Date(System.currentTimeMillis() + 10000 * 60 * 24))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -73,7 +76,7 @@ public class JwtService {
                 .parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
-                .parseClaimsJwt(token)
+                .parseClaimsJws(token)
                 .getBody();
     }
 
