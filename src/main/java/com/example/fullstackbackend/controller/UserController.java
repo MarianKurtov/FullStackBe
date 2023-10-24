@@ -1,6 +1,5 @@
 package com.example.fullstackbackend.controller;
 
-
 import com.example.fullstackbackend.entities.UserEntity;
 import com.example.fullstackbackend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,14 +24,14 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/users/{id}")
-    public UserEntity getUserById(@PathVariable Integer id) {
-        return userService.getUserById(id);
-    }
-
     @GetMapping("/users")
     public List<UserEntity> getUserById() {
         return userService.getAllUsers();
+    }
+
+    @GetMapping("/users/{id}")
+    public UserEntity getUserById(@PathVariable Integer id) {
+        return userService.getUserById(id);
     }
 
     @PostMapping("create-user")
@@ -69,8 +68,7 @@ public class UserController {
 
     @DeleteMapping("delete-user")
     public ResponseEntity<Integer> deleteUser(@RequestParam Integer id) {
-
-         Optional<UserEntity> deleteSuccess = userService.deleteUser(id);
+        Optional<UserEntity> deleteSuccess = userService.deleteUser(id);
 
         Integer userId = null;
         HttpStatus status = HttpStatus.CONFLICT;
