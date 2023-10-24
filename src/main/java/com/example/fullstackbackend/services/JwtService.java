@@ -1,5 +1,6 @@
 package com.example.fullstackbackend.services;
 
+import com.example.fullstackbackend.entities.UserEntity;
 import com.example.fullstackbackend.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -39,9 +40,8 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        //validate if this token belong to this User
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        return (username.equals(((UserEntity) userDetails).getEmail()) && !isTokenExpired(token));
     }
 
     private boolean isTokenExpired(String token) {
@@ -55,15 +55,14 @@ public class JwtService {
     public String generateToken(Map<String, Objects> extraClaims, UserDetails userDetails) {
 
         var user = userRepository.getUserEntityByPassword(userDetails.getPassword()).orElseThrow();
-        var role = user.getRoles().stream().findFirst().get().getName();
 
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
                 .setId(Long.toString(user.getId()))
-                .setSubject(role)
+                .setSubject(user.getEmail())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .setExpiration(new Date(System.currentTimeMillis() + 10000 * 60 * 24))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -73,7 +72,7 @@ public class JwtService {
                 .parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
-                .parseClaimsJwt(token)
+                .parseClaimsJws(token)
                 .getBody();
     }
 

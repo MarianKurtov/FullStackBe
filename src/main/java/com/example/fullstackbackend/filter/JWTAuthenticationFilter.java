@@ -1,4 +1,4 @@
-package com.example.fullstackbackend.config;
+package com.example.fullstackbackend.filter;
 
 import com.example.fullstackbackend.services.JwtService;
 import jakarta.servlet.FilterChain;
